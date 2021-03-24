@@ -62,7 +62,11 @@ namespace RedditDownloader
                     if (vid.with_audio)
                         download_audio();
                     else
+                    {
                         button2.Enabled = true;
+                        File.Copy(vid.video_path, textBox2.Text);
+                        backgroundWorker4.RunWorkerAsync();
+                    }
                 };
                 wc.DownloadFileAsync(new Uri(vid.media_url + "DASH_" + quality + ".mp4"), vid.video_path);
             }
@@ -96,34 +100,41 @@ namespace RedditDownloader
         private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
         {
             vid = new Rvideo(textBox1.Text);
-            filesize = GetFileSize(vid.media_url + "DASH_" + get_checked_text() + ".mp4").ToString();
+            if (vid.data_parsed)
+            {
+                filesize = GetFileSize(vid.media_url + "DASH_" + get_checked_text() + ".mp4").ToString();
+            }
+            else MessageBox.Show("Failed to parse data from site, make sure it's valid and the subreddit isn't private", "Error");
 
 
         }
         private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            Radiomanager();
-            label2.Text = vid.title;
-            label2.Enabled = true;
-            TimeSpan time = TimeSpan.FromSeconds(vid.duration);
-            Duration.Text = time.ToString(@"mm\:ss");
-            button2.Enabled = true;
-            Size_label.Text = filesize;
+            if (vid.data_parsed)
+            {
+                Radiomanager();
+                label2.Text = vid.title;
+                label2.Enabled = true;
+                TimeSpan time = TimeSpan.FromSeconds(vid.duration);
+                Duration.Text = time.ToString(@"mm\:ss");
+                button2.Enabled = true;
+                Size_label.Text = filesize;
+                string download_dir = Path.Combine(Directory.GetCurrentDirectory(), "Downloads");
+                if (!Directory.Exists(download_dir)) Directory.CreateDirectory(download_dir);
+                textBox2.Text = Path.Combine(download_dir, vid.title + ".mp4");
+                saveFileDialog1.FileName = textBox2.Text;
+                textBox2.Enabled = true;
+                if (vid.with_audio)
+                {
+                    progressBar1.Maximum = 250;
+                    richTextBox1.Text += "Audio file found...\n";
+                }
+                else
+                {
+                    richTextBox1.Text += "Audio file isn't available.\n";
+                }
+            }
 
-            string download_dir = Path.Combine(Directory.GetCurrentDirectory(), "Downloads");
-            if (!Directory.Exists(download_dir)) Directory.CreateDirectory(download_dir);
-            textBox2.Text = Path.Combine(download_dir, vid.title + ".mp4");
-            saveFileDialog1.FileName = textBox2.Text;
-            textBox2.Enabled = true;
-            if (vid.with_audio)
-            {
-                progressBar1.Maximum = 250;
-                richTextBox1.Text += "Audio file found...\n";
-            }
-            else
-            {
-                richTextBox1.Text += "Audio file isn't available.\n";
-            }
 
         }
         public void Radiomanager()
@@ -206,11 +217,11 @@ namespace RedditDownloader
 
         private void backgroundWorker4_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            progressBar1.Value += 50;
+            if(vid.with_audio) progressBar1.Value += 50;
             richTextBox1.Text += "Done.\n";
             CustomMessageBox c = new CustomMessageBox(this);
             Directory.Delete(vid.temp_dir,true);
-            c.Show();
+            c.ShowDialog();
         }
         public void Clear_Form()
         {

@@ -117,6 +117,7 @@ namespace RedditDownloader
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CausesValidation = false;
             this.ClientSize = new System.Drawing.Size(439, 129);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.textBox1);
@@ -130,8 +131,11 @@ namespace RedditDownloader
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "CustomMessageBox";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Download Completed";
+            this.TopMost = true;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.CustomMessageBox_FormClosed);
             this.Load += new System.EventHandler(this.CustomMessageBox_Load);
             this.ResumeLayout(false);
