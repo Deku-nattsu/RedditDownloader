@@ -9,14 +9,32 @@ namespace RedditDownloader
 {
     class Rvideo
     {
-        public string title, temp_dir, video_path, audio_path, media_url;
-        public List<string> available_quality = new List<string>() { "240", "360", "480", "720", "1080" };
+        private string media_url;
+        private List<string> available_quality = new List<string>() { "240", "360", "480", "720", "1080" };
         private string dash_url, mdp;
         private readonly string url;
-        public readonly bool data_parsed;
-        public bool with_audio;
-        public int duration;
-        public List<string> locked_settings = new List<string>();
+        private readonly bool data_parsed;
+        private bool with_audio;
+        private int duration;
+        private List<string> locked_settings = new List<string>();
+        private string title;
+        private string temp_dir;
+        private string video_path;
+        private string audio_path;
+
+        public List<string> Locked_settings { get => locked_settings; set => locked_settings = value; }
+        public int Duration { get => duration;}
+        public bool With_audio { get => with_audio;}
+
+        public bool Data_parsed => data_parsed;
+
+        public string Title { get => title;}
+        public string Temp_dir { get => temp_dir;}
+        public string Video_path { get => video_path;}
+        public string Audio_path { get => audio_path;}
+        public string Media_url { get => media_url;}
+        public List<string> Available_quality { get => available_quality;}
+
         public Rvideo(string _url)
         {
             Setup_dirs();

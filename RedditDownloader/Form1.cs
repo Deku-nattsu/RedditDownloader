@@ -22,7 +22,7 @@ namespace RedditDownloader
                 item.CheckedChanged += QualityBox_CheckedChanged;
             }
         }
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void TextBox1_TextChanged(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(textBox1.Text) && ((textBox1.Text.StartsWith("https://") || textBox1.Text.StartsWith("www."))))
             {
@@ -38,16 +38,16 @@ namespace RedditDownloader
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void Button2_Click(object sender, EventArgs e)
         {
-            richTextBox1.Text += "Selected " + get_checked_text() + "p video quality.\n";
+            richTextBox1.Text += "Selected " + GetChecked_text + "p video quality.\n";
             button1.Enabled = false;
             button2.Enabled = false;
             richTextBox1.Text += string.Format("Downloading video file....");
-            download_video(get_checked_text());
+            Download_video(GetChecked_text);
         }
 
-        private void download_video(string quality)
+        private void Download_video(string quality)
         {
             using (WebClient wc = new WebClient())
             {
@@ -59,19 +59,20 @@ namespace RedditDownloader
                 wc.DownloadFileCompleted += (s, e) =>
                 {
                     richTextBox1.Text += string.Format("Done.\n");
-                    if (vid.with_audio)
-                        download_audio();
+                    if (vid.With_audio)
+                        Download_audio();
                     else
                     {
                         button2.Enabled = true;
-                        File.Copy(vid.video_path, textBox2.Text);
+                        File.Delete(textBox2.Text);
+                        File.Move(vid.Video_path, textBox2.Text);
                         backgroundWorker4.RunWorkerAsync();
                     }
                 };
-                wc.DownloadFileAsync(new Uri(vid.media_url + "DASH_" + quality + ".mp4"), vid.video_path);
+                wc.DownloadFileAsync(new Uri(vid.Media_url + "DASH_" + quality + ".mp4"), vid.Video_path);
             }
         }
-        private void download_audio()
+        private void Download_audio()
         {
             richTextBox1.Text += string.Format("Downloading audio file....");
             using (WebClient wc = new WebClient())
@@ -88,43 +89,44 @@ namespace RedditDownloader
                     richTextBox1.Text += "Combining audio and video files\n";
                     backgroundWorker4.RunWorkerAsync();
                 };
-                wc.DownloadFileAsync(new Uri(vid.media_url + "DASH_audio.mp4"), vid.audio_path);
+                wc.DownloadFileAsync(new Uri(vid.Media_url + "DASH_audio.mp4"), vid.Audio_path);
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             richTextBox1.Text = "Fetching data from site\n";
             backgroundWorker2.RunWorkerAsync();
         }
-        private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        private void BackgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
         {
             vid = new Rvideo(textBox1.Text);
-            if (vid.data_parsed)
+            if (vid.Data_parsed)
             {
-                filesize = GetFileSize(vid.media_url + "DASH_" + get_checked_text() + ".mp4").ToString();
+                filesize = GetFileSize(vid.Media_url + "DASH_" + GetChecked_text + ".mp4").ToString();
             }
             else MessageBox.Show("Failed to parse data from site, make sure it's valid and the subreddit isn't private", "Error");
 
 
         }
-        private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void BackgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (vid.data_parsed)
+            if (vid.Data_parsed)
             {
                 Radiomanager();
-                label2.Text = vid.title;
+                label2.Text = vid.Title;
                 label2.Enabled = true;
-                TimeSpan time = TimeSpan.FromSeconds(vid.duration);
+                TimeSpan time = TimeSpan.FromSeconds(vid.Duration);
                 Duration.Text = time.ToString(@"mm\:ss");
                 button2.Enabled = true;
                 Size_label.Text = filesize;
                 string download_dir = Path.Combine(Directory.GetCurrentDirectory(), "Downloads");
                 if (!Directory.Exists(download_dir)) Directory.CreateDirectory(download_dir);
-                textBox2.Text = Path.Combine(download_dir, vid.title + ".mp4");
+                textBox2.Text = Path.Combine(download_dir, vid.Title + ".mp4");
+                if (File.Exists(textBox2.Text)) warning.Text = "Warning! file already exists";
                 saveFileDialog1.FileName = textBox2.Text;
                 textBox2.Enabled = true;
-                if (vid.with_audio)
+                if (vid.With_audio)
                 {
                     progressBar1.Maximum = 250;
                     richTextBox1.Text += "Audio file found...\n";
@@ -139,28 +141,32 @@ namespace RedditDownloader
         }
         public void Radiomanager()
         {
-            foreach (string item in vid.locked_settings)
+            foreach (string item in vid.Locked_settings)
             {
                 richTextBox1.Text += item + "p isn't available....\n";
             }
-            foreach (string item in vid.available_quality)
+            foreach (string item in vid.Available_quality)
             {
                 var buttons = groupBox2.Controls.OfType<RadioButton>()
                     .FirstOrDefault(n => n.Text == item);
                 buttons.Enabled = true;
             }
         }
-        private string get_checked_text()
+        private string GetChecked_text
         {
-            var buttons = groupBox2.Controls.OfType<RadioButton>()
-                .FirstOrDefault(n => n.Checked);
-            return buttons.Text;
+            get
+            {
+                var buttons = groupBox2.Controls.OfType<RadioButton>()
+                    .FirstOrDefault(n => n.Checked);
+                return buttons.Text;
+            }
         }
+
         public void QualityBox_CheckedChanged(object sender, EventArgs e)
         {
             string checkedText = ((RadioButton)sender).Text;
 
-            Size_label.Text = GetFileSize(vid.media_url + "DASH_" + checkedText + ".mp4").ToString();
+            Size_label.Text = GetFileSize(vid.Media_url + "DASH_" + checkedText + ".mp4").ToString();
 
         }
         public string GetFileSize(string url)
@@ -180,47 +186,47 @@ namespace RedditDownloader
             return string.Format("{0:0.###} MB", (result / 1024f) / 1024f);
         }
 
-        public void Convert(string path)
+        public void Convert(string output)
         {
             using (var engine = new Engine())
             {
-                engine.CustomCommand(string.Format("-i {0} -i {1} -vcodec copy -acodec copy \"{2}\"", vid.video_path, vid.audio_path, path));
+                engine.CustomCommand(string.Format("-i {0} -i {1} -vcodec copy -acodec copy \"{2}\"", vid.Video_path, vid.Audio_path, output));
 
             }
         }
 
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        private void RichTextBox1_TextChanged(object sender, EventArgs e)
         {
             richTextBox1.SelectionStart = richTextBox1.Text.Length;
             // scroll it automatically
             richTextBox1.ScrollToCaret();
         }
-        private void groupBox1_Enter(object sender, EventArgs e)
+        private void GroupBox1_Enter(object sender, EventArgs e)
         {
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void Button3_Click(object sender, EventArgs e)
         {
             this.saveFileDialog1.ShowDialog();
         }
 
-        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
+        private void SaveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             this.textBox2.Text = this.saveFileDialog1.FileName;
         }
 
-        private void backgroundWorker4_DoWork(object sender, DoWorkEventArgs e)
+        private void BackgroundWorker4_DoWork(object sender, DoWorkEventArgs e)
         {
             Convert(textBox2.Text);
         }
 
-        private void backgroundWorker4_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void BackgroundWorker4_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if(vid.with_audio) progressBar1.Value += 50;
+            if(vid.With_audio) progressBar1.Value += 50;
             richTextBox1.Text += "Done.\n";
-            CustomMessageBox c = new CustomMessageBox(this);
-            Directory.Delete(vid.temp_dir,true);
+            DownloadCompletedBox c = new DownloadCompletedBox(this);
+            Directory.Delete(vid.Temp_dir,true);
             c.ShowDialog();
         }
         public void Clear_Form()
@@ -243,7 +249,7 @@ namespace RedditDownloader
             progressBar1.Value = 0;
         }
 
-        private void button2_EnabledChanged(object sender, EventArgs e)
+        private void Button2_EnabledChanged(object sender, EventArgs e)
         {
             button3.Enabled = button2.Enabled;
         }

@@ -55,11 +55,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomMessageBox.cs">
+    <Compile Include="DownloadCompletedBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CustomMessageBox.Designer.cs">
-      <DependentUpon>CustomMessageBox.cs</DependentUpon>
+    <Compile Include="DownloadCompletedBox.Designer.cs">
+      <DependentUpon>DownloadCompletedBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -71,8 +71,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rvideo.cs" />
-    <EmbeddedResource Include="CustomMessageBox.resx">
-      <DependentUpon>CustomMessageBox.cs</DependentUpon>
+    <EmbeddedResource Include="DownloadCompletedBox.resx">
+      <DependentUpon>DownloadCompletedBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

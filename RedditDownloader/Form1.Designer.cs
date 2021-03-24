@@ -59,6 +59,7 @@ namespace RedditDownloader
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.label8 = new System.Windows.Forms.Label();
             this.backgroundWorker4 = new System.ComponentModel.BackgroundWorker();
+            this.warning = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -69,7 +70,7 @@ namespace RedditDownloader
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(542, 20);
             this.textBox1.TabIndex = 0;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.textBox1.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
             // 
             // button1
             // 
@@ -80,7 +81,7 @@ namespace RedditDownloader
             this.button1.TabIndex = 1;
             this.button1.Text = "Fetch";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // button2
             // 
@@ -91,8 +92,8 @@ namespace RedditDownloader
             this.button2.TabIndex = 4;
             this.button2.Text = "Download";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.EnabledChanged += new System.EventHandler(this.button2_EnabledChanged);
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.EnabledChanged += new System.EventHandler(this.Button2_EnabledChanged);
+            this.button2.Click += new System.EventHandler(this.Button2_Click);
             // 
             // progressBar1
             // 
@@ -103,8 +104,8 @@ namespace RedditDownloader
             // 
             // backgroundWorker2
             // 
-            this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker2_DoWork);
-            this.backgroundWorker2.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker2_RunWorkerCompleted);
+            this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker2_DoWork);
+            this.backgroundWorker2.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorker2_RunWorkerCompleted);
             // 
             // richTextBox1
             // 
@@ -115,7 +116,7 @@ namespace RedditDownloader
             this.richTextBox1.Size = new System.Drawing.Size(568, 99);
             this.richTextBox1.TabIndex = 6;
             this.richTextBox1.Text = "";
-            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+            this.richTextBox1.TextChanged += new System.EventHandler(this.RichTextBox1_TextChanged);
             // 
             // label2
             // 
@@ -140,7 +141,7 @@ namespace RedditDownloader
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Info";
-            this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            this.groupBox1.Enter += new System.EventHandler(this.GroupBox1_Enter);
             // 
             // Size_label
             // 
@@ -295,7 +296,7 @@ namespace RedditDownloader
             this.button3.Text = "...";
             this.button3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.button3.Click += new System.EventHandler(this.Button3_Click);
             // 
             // textBox2
             // 
@@ -310,7 +311,7 @@ namespace RedditDownloader
             this.saveFileDialog1.DefaultExt = "mp4";
             this.saveFileDialog1.Filter = "mp4 files (*.mp4)|*.mp4";
             this.saveFileDialog1.InitialDirectory = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE";
-            this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
+            this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.SaveFileDialog1_FileOk);
             // 
             // label8
             // 
@@ -322,14 +323,25 @@ namespace RedditDownloader
             // 
             // backgroundWorker4
             // 
-            this.backgroundWorker4.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker4_DoWork);
-            this.backgroundWorker4.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker4_RunWorkerCompleted);
+            this.backgroundWorker4.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker4_DoWork);
+            this.backgroundWorker4.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorker4_RunWorkerCompleted);
+            // 
+            // warning
+            // 
+            this.warning.AutoSize = true;
+            this.warning.ForeColor = System.Drawing.Color.Red;
+            this.warning.Location = new System.Drawing.Point(292, 192);
+            this.warning.Name = "warning";
+            this.warning.Size = new System.Drawing.Size(0, 13);
+            this.warning.TabIndex = 19;
+            this.warning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(739, 420);
+            this.Controls.Add(this.warning);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button3);
@@ -387,6 +399,7 @@ namespace RedditDownloader
         public System.Windows.Forms.Label label8;
         private System.ComponentModel.BackgroundWorker backgroundWorker4;
         public System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label warning;
     }
 }
 
