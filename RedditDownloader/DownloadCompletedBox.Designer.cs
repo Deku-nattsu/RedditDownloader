@@ -113,7 +113,7 @@ namespace RedditDownloader
             this.label3.Size = new System.Drawing.Size(0, 13);
             this.label3.TabIndex = 7;
             // 
-            // CustomMessageBox
+            // DownloadCompletedBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -130,10 +130,10 @@ namespace RedditDownloader
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "CustomMessageBox";
+            this.Name = "DownloadCompletedBox";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Download Completed";
             this.TopMost = true;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.CustomMessageBox_FormClosed);

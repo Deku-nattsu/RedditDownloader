@@ -11,31 +11,29 @@ namespace RedditDownloader
     public partial class Form1 : Form
     {
         private Rvideo vid;
-        private string filesize;
+        public string temp_dir = Path.Combine(Path.GetTempPath(), "RVID");
         public Form1()
         {
             InitializeComponent();
-            var radioButtons = groupBox2.Controls.OfType<RadioButton>();
 
-            foreach (RadioButton item in radioButtons)
-            {
-                item.CheckedChanged += QualityBox_CheckedChanged;
-            }
         }
         private void TextBox1_TextChanged(object sender, EventArgs e)
         {
+            button1.Enabled = false;
             if (!string.IsNullOrEmpty(textBox1.Text) && ((textBox1.Text.StartsWith("https://") || textBox1.Text.StartsWith("www."))))
-            {
-                button1.Enabled = true;
-            }
-            else
-                button1.Enabled = false;
-
+            button1.Enabled = true;
+                
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            var radioButtons = groupBox2.Controls.OfType<RadioButton>();
+            foreach (RadioButton item in radioButtons)
+            {
+                item.CheckedChanged += QualityBox_CheckedChanged;
+            }
+            if (Directory.Exists(temp_dir)) Directory.Delete(temp_dir, true);
+            Directory.CreateDirectory(temp_dir);
         }
 
         private void Button2_Click(object sender, EventArgs e)
@@ -59,8 +57,7 @@ namespace RedditDownloader
                 wc.DownloadFileCompleted += (s, e) =>
                 {
                     richTextBox1.Text += string.Format("Done.\n");
-                    if (vid.With_audio)
-                        Download_audio();
+                    if (vid.With_audio) Download_audio();
                     else
                     {
                         button2.Enabled = true;
@@ -100,18 +97,18 @@ namespace RedditDownloader
         }
         private void BackgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
         {
-            vid = new Rvideo(textBox1.Text);
-            if (vid.Data_parsed)
+            try
             {
-                filesize = GetFileSize(vid.Media_url + "DASH_" + GetChecked_text + ".mp4").ToString();
+                vid = new Rvideo(textBox1.Text, temp_dir);
             }
-            else MessageBox.Show("Failed to parse data from site, make sure it's valid and the subreddit isn't private", "Error");
-
-
+            catch (Exception)
+            {
+                MessageBox.Show("Failed to parse data from site, make sure it's valid and the subreddit isn't private", "Error");
+            }
         }
         private void BackgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (vid.Data_parsed)
+            try
             {
                 Radiomanager();
                 label2.Text = vid.Title;
@@ -119,7 +116,7 @@ namespace RedditDownloader
                 TimeSpan time = TimeSpan.FromSeconds(vid.Duration);
                 Duration.Text = time.ToString(@"mm\:ss");
                 button2.Enabled = true;
-                Size_label.Text = filesize;
+                Size_label.Text = GetFileSize(vid.Media_url + "DASH_" + GetChecked_text + ".mp4").ToString(); ;
                 string download_dir = Path.Combine(Directory.GetCurrentDirectory(), "Downloads");
                 if (!Directory.Exists(download_dir)) Directory.CreateDirectory(download_dir);
                 textBox2.Text = Path.Combine(download_dir, vid.Title + ".mp4");
@@ -136,13 +133,19 @@ namespace RedditDownloader
                     richTextBox1.Text += "Audio file isn't available.\n";
                 }
             }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
 
 
         }
         public void Radiomanager()
         {
-            foreach (string item in vid.Locked_settings)
+            foreach (string item in vid.Vid_q)
             {
+                if(!vid.Available_quality.Contains(item))
                 richTextBox1.Text += item + "p isn't available....\n";
             }
             foreach (string item in vid.Available_quality)
@@ -165,7 +168,6 @@ namespace RedditDownloader
         public void QualityBox_CheckedChanged(object sender, EventArgs e)
         {
             string checkedText = ((RadioButton)sender).Text;
-
             Size_label.Text = GetFileSize(vid.Media_url + "DASH_" + checkedText + ".mp4").ToString();
 
         }
@@ -173,9 +175,9 @@ namespace RedditDownloader
         {
             long result = -1;
 
-            System.Net.WebRequest req = System.Net.WebRequest.Create(url);
+            WebRequest req = WebRequest.Create(url);
             req.Method = "HEAD";
-            using (System.Net.WebResponse resp = req.GetResponse())
+            using (WebResponse resp = req.GetResponse())
             {
                 if (long.TryParse(resp.Headers.Get("Content-Length"), out long ContentLength))
                 {
@@ -226,7 +228,7 @@ namespace RedditDownloader
             if(vid.With_audio) progressBar1.Value += 50;
             richTextBox1.Text += "Done.\n";
             DownloadCompletedBox c = new DownloadCompletedBox(this);
-            Directory.Delete(vid.Temp_dir,true);
+            Directory.Delete(temp_dir,true);
             c.ShowDialog();
         }
         public void Clear_Form()
@@ -239,9 +241,9 @@ namespace RedditDownloader
             radioButton5.Enabled = false;
 
             textBox2.Clear();
-            label2.Text = "";
-            Duration.Text = "";
-            Size_label.Text = "";
+            label2.Text = string.Empty;
+            Duration.Text = string.Empty;
+            Size_label.Text = string.Empty;
 
             richTextBox1.Clear();
 
@@ -253,5 +255,6 @@ namespace RedditDownloader
         {
             button3.Enabled = button2.Enabled;
         }
+
     }
 }

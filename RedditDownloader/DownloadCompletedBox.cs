@@ -35,13 +35,12 @@ namespace RedditDownloader
 
         private void Button4_Click(object sender, EventArgs e)
         {
-            Close();
-            frm.Close();
+            Environment.Exit(0);
         }
 
         private void Button3_Click(object sender, EventArgs e)
         {
-            Close();
+            Dispose();
         }
 
         private void CustomMessageBox_FormClosed(object sender, FormClosedEventArgs e)
